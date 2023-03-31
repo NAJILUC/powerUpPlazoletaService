@@ -20,7 +20,7 @@ import javax.persistence.Table;
 @Setter
 public class Restaurante_empleadoEntity {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     @Id
     @Column(name = "persona_id", nullable = false)
     private Long id_persona;

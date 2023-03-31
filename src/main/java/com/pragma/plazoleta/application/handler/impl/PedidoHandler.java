@@ -1,9 +1,12 @@
 package com.pragma.plazoleta.application.handler.impl;
 
+import com.pragma.plazoleta.application.dto.request.MessageRequestDto;
 import com.pragma.plazoleta.application.dto.request.PedidoRequestDto;
 import com.pragma.plazoleta.application.dto.request.Pedido_platoRequestDto;
+import com.pragma.plazoleta.application.dto.response.PedidoResponseDto;
 import com.pragma.plazoleta.application.handler.IPedidoHandler;
 import com.pragma.plazoleta.application.mapper.IPedidoRequestMapper;
+import com.pragma.plazoleta.application.mapper.IPedidoResponseMapper;
 import com.pragma.plazoleta.application.mapper.IPedido_platoRequestMapper;
 import com.pragma.plazoleta.domain.api.IPedidoServicePort;
 import com.pragma.plazoleta.domain.model.PedidoModel;
@@ -24,6 +27,7 @@ public class PedidoHandler implements IPedidoHandler {
 
     private final IPedidoServicePort pedidoServicePort;
     private final IPedidoRequestMapper pedidoRequestMapper;
+    private final IPedidoResponseMapper pedidoResponseMapper;
 
     private final IToken iToken;
 
@@ -43,5 +47,30 @@ public class PedidoHandler implements IPedidoHandler {
             pedido_platoModels.add(pedido_platoRequestMapper.toPedido_platoModel(aux));
         }
         pedidoServicePort.savePedido(pedidoModel,pedido_platoModels);
+    }
+
+    @Override
+    public List<PedidoResponseDto> getAllPpedidos(Integer page, Integer size) {
+        return pedidoResponseMapper.toResponseList(pedidoServicePort.getAllPedidos(page,size));
+    }
+
+    @Override
+    public void proccesMessage(MessageRequestDto messageRequestDto, Long idCliente) {
+        pedidoServicePort.proccesMessage(messageRequestDto,idCliente);
+    }
+
+    @Override
+    public void assignEmployed(Long idPedido) {
+        pedidoServicePort.assignEmployed(idPedido);
+    }
+
+    @Override
+    public void deliverOrder(Long idPedido, Long pin) {
+        pedidoServicePort.deliverOrder(idPedido,pin);
+    }
+
+    @Override
+    public void cancelOrder(Long idPedido) {
+        pedidoServicePort.cancelOrder(idPedido);
     }
 }

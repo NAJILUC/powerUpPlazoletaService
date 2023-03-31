@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface IRestaurante_empleadoServicePort {
 
-    void saveRestaurante_empleado(Restaurante_empleadoModel restaurante_empleadoModel);
+    void saveRestaurante_empleado(Long idPropietario, Long idEmpleado);
 
     List<Restaurante_empleadoModel> getAllRestaurantes_empleados();
 }

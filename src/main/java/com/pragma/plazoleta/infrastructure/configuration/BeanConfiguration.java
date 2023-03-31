@@ -4,31 +4,37 @@ import com.pragma.plazoleta.domain.api.ICategoriaServicePort;
 import com.pragma.plazoleta.domain.api.IPedidoServicePort;
 import com.pragma.plazoleta.domain.api.IPlatoServicePort;
 import com.pragma.plazoleta.domain.api.IRestauranteServicePort;
+import com.pragma.plazoleta.domain.api.IRestaurante_empleadoServicePort;
 import com.pragma.plazoleta.domain.spi.ICategoriaPersistencePort;
 import com.pragma.plazoleta.domain.spi.IPedidoPersistencePort;
 import com.pragma.plazoleta.domain.spi.IPedido_platoPersistencePort;
 import com.pragma.plazoleta.domain.spi.IPlatoPersistencePort;
 import com.pragma.plazoleta.domain.spi.IRestaurantePersistencePort;
 import com.pragma.plazoleta.domain.spi.IRestaurante_empleadoPersistencePort;
+import com.pragma.plazoleta.domain.spi.feignCLient.IMessageFeignClientPort;
 import com.pragma.plazoleta.domain.spi.feignCLient.IUserFeignClientPort;
 import com.pragma.plazoleta.domain.spi.token.IToken;
 import com.pragma.plazoleta.domain.usecase.CategoriaUseCase;
 import com.pragma.plazoleta.domain.usecase.PedidoUseCase;
 import com.pragma.plazoleta.domain.usecase.PlatoUseCase;
 import com.pragma.plazoleta.domain.usecase.RestauranteUseCase;
+import com.pragma.plazoleta.domain.usecase.Restaurante_empleadoUseCase;
 import com.pragma.plazoleta.infrastructure.out.jpa.adapter.CategoriaJpaAdapter;
 import com.pragma.plazoleta.infrastructure.out.jpa.adapter.PedidoJpaAdapter;
 import com.pragma.plazoleta.infrastructure.out.jpa.adapter.Pedido_platoJpaAdapter;
 import com.pragma.plazoleta.infrastructure.out.jpa.adapter.PlatoJpaAdapter;
 import com.pragma.plazoleta.infrastructure.out.jpa.adapter.RestauranteJpaAdapter;
 import com.pragma.plazoleta.infrastructure.out.jpa.adapter.Restaurante_empleadoJpaAdapter;
+import com.pragma.plazoleta.infrastructure.out.jpa.feignclients.MessageFeignClient;
 import com.pragma.plazoleta.infrastructure.out.jpa.feignclients.UserFeignClient;
+import com.pragma.plazoleta.infrastructure.out.jpa.feignclients.adapter.MessageFeignAdapter;
 import com.pragma.plazoleta.infrastructure.out.jpa.feignclients.adapter.UserFeignAdapter;
 import com.pragma.plazoleta.infrastructure.out.jpa.mapper.ICategoriaEntityMapper;
 import com.pragma.plazoleta.infrastructure.out.jpa.mapper.IPedidoEntityMapper;
 import com.pragma.plazoleta.infrastructure.out.jpa.mapper.IPedido_platoEntityMapper;
 import com.pragma.plazoleta.infrastructure.out.jpa.mapper.IPlatoEntityMapper;
 import com.pragma.plazoleta.infrastructure.out.jpa.mapper.IRestauranteEntityMapper;
+import com.pragma.plazoleta.infrastructure.out.jpa.mapper.IRestaurante_empleadoEntityMapper;
 import com.pragma.plazoleta.infrastructure.out.jpa.repository.ICategoriaRepository;
 import com.pragma.plazoleta.infrastructure.out.jpa.repository.IPedidoRepository;
 import com.pragma.plazoleta.infrastructure.out.jpa.repository.IPedido_platoRepository;
@@ -56,11 +62,14 @@ public class BeanConfiguration {
     private final IPedido_platoEntityMapper pedido_platoEntityMapper;
 
     private final IRestaurante_empleadoRepository restaurante_empleadoRepository;
+    private final IRestaurante_empleadoEntityMapper restaurante_empleadoEntityMapper;
 
     private final IPedidoRepository pedidoRepository;
     private final IPedidoEntityMapper pedidoEntityMapper;
 
     private final UserFeignClient userFeignClient;
+
+    private final MessageFeignClient messageFeignClient;
 
 
     @Bean
@@ -95,7 +104,7 @@ public class BeanConfiguration {
 
     @Bean
     public IPedidoServicePort pedidoServicePort(){
-        return new PedidoUseCase(pedidoPersistencePort(), pedido_platoPersistencePort());
+        return new PedidoUseCase(pedidoPersistencePort(), pedido_platoPersistencePort(), restaurante_empleadoPersistencePort(), token(), messageFeignClientPort(), userFeignClientPort());
     }
     @Bean
     public IPedidoPersistencePort pedidoPersistencePort() {
@@ -110,7 +119,17 @@ public class BeanConfiguration {
 
     @Bean
     public IRestaurante_empleadoPersistencePort restaurante_empleadoPersistencePort() {
-        return new Restaurante_empleadoJpaAdapter(restaurante_empleadoRepository);
+        return new Restaurante_empleadoJpaAdapter(restaurante_empleadoRepository, restaurante_empleadoEntityMapper);
+    }
+
+    @Bean
+    public IRestaurante_empleadoServicePort restaurante_empleadoServicePort(){
+        return new Restaurante_empleadoUseCase(restaurante_empleadoPersistencePort(),new RestauranteUseCase(objectPersistencePort()));
+    }
+
+    @Bean
+    public IMessageFeignClientPort messageFeignClientPort(){
+        return new MessageFeignAdapter(messageFeignClient);
     }
 
 

@@ -35,7 +35,7 @@ public class RestauranteHandler implements IRestauranteHandler {
       if(userFeignClient.userExist(restauranteRequestDto.getIdPropietario())) {
             RestauranteModel restauranteModel = restauranteRequestMapper.toObject(restauranteRequestDto);
 //          System.out.println("El restaurante "+restauranteModel.getNombre()+" se guardo");
-          //  restauranteServicePort.saveRestaurante(restauranteModel);
+            restauranteServicePort.saveRestaurante(restauranteModel);
         }else throw new DomainException("El usuario no existe o no tiene el rol propietario");
        /* List<UserResponseDto> users = userFeignClient.getAllUsers();
         for (UserResponseDto user: users) {

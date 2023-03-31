@@ -10,4 +10,7 @@ public interface IPedidoPersistencePort {
     PedidoModel savePedido(PedidoModel pedidoModel);
 
     List<PedidoModel> getAllPedidos();
+    List<PedidoModel> getAllPedidos(Integer page, Integer size);
+    void deleteOrder(PedidoModel pedidoModel);
+
 }

@@ -2,12 +2,14 @@ package com.pragma.plazoleta.infrastructure.input.rest;
 
 import com.pragma.plazoleta.application.dto.request.*;
 import com.pragma.plazoleta.application.dto.response.CategoriaResponseDto;
+import com.pragma.plazoleta.application.dto.response.PedidoResponseDto;
 import com.pragma.plazoleta.application.dto.response.PlatoResponseDto;
 import com.pragma.plazoleta.application.dto.response.RestauranteResponseDto;
 import com.pragma.plazoleta.application.handler.ICategoriaHandler;
 import com.pragma.plazoleta.application.handler.IPedidoHandler;
 import com.pragma.plazoleta.application.handler.IPlatoHandler;
 import com.pragma.plazoleta.application.handler.IRestauranteHandler;
+import com.pragma.plazoleta.application.handler.IRestaurante_empleadoHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -37,6 +40,7 @@ public class RestauranteRestController {
     private final ICategoriaHandler categoriaHandler;
     private final IPlatoHandler platoHandler;
     private final IPedidoHandler pedidoHandler;
+    private final IRestaurante_empleadoHandler restaurante_empleadoHandler;
 
 
     @Operation(summary = "Add a new restaurante")
@@ -105,6 +109,7 @@ public class RestauranteRestController {
             @ApiResponse(responseCode = "409", description = "Plato already exists", content = @Content)
     })
     @PostMapping("/plato")
+    @PreAuthorize("hasAuthority('Propietario')")
     public ResponseEntity<Void> savePlato(@RequestBody PlatoRequestDto platoRequestDto) {
         platoHandler.savePlato(platoRequestDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -118,23 +123,27 @@ public class RestauranteRestController {
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
     })
     @GetMapping("/plato")
+    @PreAuthorize("hasAuthority('Cliente')")
     public ResponseEntity<List<PlatoResponseDto>> getAllPlatos() {
         return ResponseEntity.ok(platoHandler.getAllPlatos());
     }
 
     @PostMapping("/updatePlato")
+    @PreAuthorize("hasAuthority('Propietario')")
     public ResponseEntity<Void> updatePlato(@RequestBody PlatoUpdateRequestDto platoUpdateRequestDto) {
         platoHandler.updatePlato(platoUpdateRequestDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PostMapping("/statusPlato")
+    @PreAuthorize("hasAuthority('Propietario')")
     public ResponseEntity<Void> updateStatusPlato(@RequestBody PlatoStatusRequestDto platoStatusRequestDto) {
         platoHandler.statusPlato(platoStatusRequestDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping("/getMenu/{restaurant}/{page}")
+    @PreAuthorize("hasAuthority('Cliente')")
     public ResponseEntity<List<PlatoResponseDto>> getAllPlatosRestaurant(@PathVariable Long restaurant,@PathVariable int page ) {
         return ResponseEntity.ok(platoHandler.getAllPlatosRestaurant(restaurant,0, page));
     }
@@ -145,15 +154,59 @@ public class RestauranteRestController {
 
      */
     @PostMapping("/pedido")
-    public ResponseEntity<Void> prubaListar(@RequestBody PedidoRequestDto pedidoRequestDto) {
-        System.out.println(pedidoRequestDto.getIdRestaurante());
-        for (Map<Long,Long> aux: pedidoRequestDto.getPlatoCantidad()) {
-
-            System.out.println(aux.keySet()+" "+aux.values());
-        }
+    @PreAuthorize("hasAuthority('Cliente')")
+    public ResponseEntity<Void> savePedido(@RequestBody PedidoRequestDto pedidoRequestDto) {
          pedidoHandler.savePedido(pedidoRequestDto);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @GetMapping("/getPedidos/{page}")
+    @PreAuthorize("hasAuthority('Empleado')")
+    public ResponseEntity<List<PedidoResponseDto>> getAllPedidos(@PathVariable int page ) {
+        return ResponseEntity.ok(pedidoHandler.getAllPpedidos(0, page));
+    }
+
+    @PostMapping("/assignEmployed/{idPedido}")
+    @PreAuthorize("hasAuthority('Empleado')")
+    public ResponseEntity<Void> assignEmployed(@PathVariable("idPedido") Long idPedido){
+        pedidoHandler.assignEmployed(idPedido);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PostMapping("/notifyOrder/{idCliente}")
+    @PreAuthorize("hasAuthority('Empleado')")
+    public ResponseEntity<Void> notifyOrder(@PathVariable("idCliente") Long idCliente,@RequestBody MessageRequestDto messageRequestDto){
+        pedidoHandler.proccesMessage(messageRequestDto, idCliente);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/deliverOrder/{idPedido}/{pin}")
+    @PreAuthorize("hasAuthority('Empleado')")
+    public ResponseEntity<Void> deliverOrder(@PathVariable("idPedido") Long idPedido,@PathVariable("pin") Long pin){
+        pedidoHandler.deliverOrder(idPedido, pin);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    @PostMapping("/cancelOrder/{idPedido}")
+    @PreAuthorize("hasAuthority('Cliente')")
+    public ResponseEntity<Void> cancelOrder(@PathVariable("idPedido")Long idPedido){
+        pedidoHandler.cancelOrder(idPedido);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    /*
+
+        RESTAURANTE X EMPLEADO
+
+     */
+    @PostMapping("/restemp/{idPropietario}/{idEmpleado}")
+    public ResponseEntity<Void> saveRestaurante_Empleado(@PathVariable("idPropietario") Long idPropietario,@PathVariable("idEmpleado") Long idEmpleado){
+
+        restaurante_empleadoHandler.saveRestaurante_Empleado(idPropietario,idEmpleado);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+
 
 
 
