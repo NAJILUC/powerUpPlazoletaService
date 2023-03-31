@@ -18,14 +18,7 @@ public class RestauranteUseCase implements IRestauranteServicePort {
     }
 
     @Override
-    public void saveRestaurante(RestauranteModel restauranteModel) {/*
-        if(restauranteModel.getNombre().isEmpty())throw new DomainException("El nombre es obligatorio");
-        if(restauranteModel.getNit().isEmpty())throw new DomainException("El nit es obligatorio");
-        if(restauranteModel.getDireccion().isEmpty())throw new DomainException("La direccion es obligatoria");
-        if(restauranteModel.getTelefono().isEmpty()||restauranteModel.getTelefono().length()<10||
-                restauranteModel.getTelefono().length()>13)throw new DomainException("Ingrese un celular valido");
-        if(restauranteModel.getUrlLogo().isEmpty())throw new DomainException("La Url del Logo es obligatoria");
-        if(restauranteModel.getIdPropietario().toString().isEmpty())throw new DomainException("El id es obligatorio");*/
+    public void saveRestaurante(RestauranteModel restauranteModel) {
         restaurantePersistencePort.saveRestaurante(restauranteModel);
     }
 

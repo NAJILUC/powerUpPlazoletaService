@@ -12,8 +12,6 @@ public class MessageFeignAdapter implements IMessageFeignClientPort {
     private final MessageFeignClient messageFeignClient;
     @Override
     public void proccesMessage(MessageRequestDto messageRequestDto) {
-//        String celular = messageRequestDto.getCelular();
-//        String mensaje = messageRequestDto.getMensaje();
         messageFeignClient.proccesMessage(messageRequestDto);
     }
 }

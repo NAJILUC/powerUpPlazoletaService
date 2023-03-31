@@ -31,16 +31,10 @@ public class RestauranteHandler implements IRestauranteHandler {
 
     @Override
     public void saveRestaurante(RestauranteRequestDto restauranteRequestDto) {
-//        System.out.println(iToken.getUserAuthenticatedId(iToken.getBearerToken()));
       if(userFeignClient.userExist(restauranteRequestDto.getIdPropietario())) {
             RestauranteModel restauranteModel = restauranteRequestMapper.toObject(restauranteRequestDto);
-//          System.out.println("El restaurante "+restauranteModel.getNombre()+" se guardo");
             restauranteServicePort.saveRestaurante(restauranteModel);
         }else throw new DomainException("El usuario no existe o no tiene el rol propietario");
-       /* List<UserResponseDto> users = userFeignClient.getAllUsers();
-        for (UserResponseDto user: users) {
-            System.out.println(user.getId() +" "+ user.getNombre() +" "+ user.getApellido() +" "+ user.getRol().getNombreRol() +" "+ user.getCorreo());
-        }*/
     }
 
     @Override

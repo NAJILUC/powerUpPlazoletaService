@@ -29,7 +29,8 @@ public class SpringSecurityConfig {
 
         return httpSecurity
                 .csrf().disable()
-                .authorizeRequests().antMatchers("/api/v1/restaurante/restemp/**").permitAll()
+                .authorizeRequests().antMatchers("/api/v1/restaurante/restemp/**"
+                        ,"/swagger-ui/**", "/swagger-resources/**","/v3/api-docs/**", "/v2/api-docs/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

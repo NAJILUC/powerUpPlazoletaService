@@ -48,12 +48,10 @@ public class PedidoUseCase implements IPedidoServicePort {
                 if(pedido.getEstado().equalsIgnoreCase("Pendiente")||
                         pedido.getEstado().equalsIgnoreCase("en_preparacion")||
                         pedido.getEstado().equalsIgnoreCase("Listo")) {
-                    //System.out.println("no puede");
                     return;
                 }
             }
         }
-        System.out.println(pedidoModel.getId()+" "+ pedidoModel.getCliente()+" "+ pedidoModel.getEstado());
 
         pedidoPersistencePort.savePedido(pedidoModel);
         //Hasta aca guarda en la tabla pedido
@@ -74,8 +72,6 @@ public class PedidoUseCase implements IPedidoServicePort {
                 return;
             }
         }
-       // System.out.println("stpop");
-        //pedidoPersistencePort.savePedido(pedidoModel);
     }
 
     @Override
@@ -84,7 +80,6 @@ public class PedidoUseCase implements IPedidoServicePort {
     }
     @Override
     public List<PedidoModel> getAllPedidos(Integer page, Integer size) {
-      //  List<PedidoModel> allPedidos = pedidoPersistencePort.getAllPedidos(page,size);
         List<PedidoModel> pedidos =pedidoPersistencePort.getAllPedidos(page,size);
         List<Restaurante_empleadoModel> empledosRes=restaurante_empleadoPersistencePort.getAllRestaurante_empleados();
         Long idRestaurante = 0L;
@@ -102,7 +97,6 @@ public class PedidoUseCase implements IPedidoServicePort {
 
     @Override
     public void proccesMessage(MessageRequestDto messageRequestDto, Long idCliente) {
-        //if(!messageRequestDto.getCelular().contains("+57")) messageRequestDto.setCelular("+57".concat(messageRequestDto.getCelular()));
         messageRequestDto.setCelular("+573185746453");
         List<PedidoModel> pedidos = getAllPedidos();
         String pin = "";
@@ -161,7 +155,7 @@ public class PedidoUseCase implements IPedidoServicePort {
     @Override
     public void cancelOrder(Long idPedido) {
         PedidoModel pedido = getPedidoById(idPedido);
-        if(pedido.getCliente()!=iToken.getUserAuthenticatedId(iToken.getBearerToken()))return;
+      //  if(pedido.getCliente()!=iToken.getUserAuthenticatedId(iToken.getBearerToken()))return;
         if(pedido.getEstado().equalsIgnoreCase("Pendiente")){
             pedido.setEstado("Cancelado");
             pedidoPersistencePort.savePedido(pedido);

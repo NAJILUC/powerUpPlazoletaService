@@ -3,6 +3,7 @@ package com.pragma.plazoleta.application.dto.request;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Pattern;
@@ -17,6 +18,7 @@ public class RestauranteRequestDto {
     private String nombre;
     @NotEmpty(message = "El nit es obligatorio")
     @Pattern(regexp = "^\\d{1,12}$", message = "Ingrese un nit valido")
+    @Min(value = 1, message = "Ingrese un nit valido")
     private String nit;
     @NotEmpty(message = "La direccion es obligatoria")
     private String direccion;

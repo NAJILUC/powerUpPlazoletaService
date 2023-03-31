@@ -20,11 +20,9 @@ public class CategoriaEntity {
     @Column(name = "categoria_id", nullable = false)
     private Long id;
 
-    @NotBlank(message = "El nombre es obligatorio")
     @Column(length = 50)
     private String nombre;
 
-    @NotBlank(message = "La descripcion es obligatoria")
     @Column(length = 50)
     private String descripcion;
 

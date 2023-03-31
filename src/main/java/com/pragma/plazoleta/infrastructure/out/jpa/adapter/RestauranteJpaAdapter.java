@@ -31,7 +31,6 @@ public class RestauranteJpaAdapter implements IRestaurantePersistencePort {
 
     @Override
     public List<RestauranteModel> getAllRestaurantes(Integer page, Integer size) {
-//        List<RestauranteEntity> entityList = restauranteRepository.findAll(Sort.by(Sort.Direction.ASC,"nombre"));
 
         List<RestauranteEntity> entityList=new ArrayList<>();
         Page<RestauranteEntity> entityPage = restauranteRepository.findAll(PageRequest.of(page,size, Sort.by(Sort.Direction.ASC,"nombre")));

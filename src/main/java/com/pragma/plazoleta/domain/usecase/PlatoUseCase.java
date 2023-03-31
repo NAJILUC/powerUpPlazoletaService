@@ -19,11 +19,6 @@ public class PlatoUseCase implements IPlatoServicePort {
     @Override
     public void savePlato(PlatoModel platoModel) {
         platoModel.setActivo(true);
-       /* if(platoModel.getNombre().isEmpty())throw new DomainException("El nombre es obligatorio");
-        if(platoModel.getCategoria()==null)throw new DomainException("La categoria es obligatoria");
-        if(platoModel.getPrecio().toString().isEmpty())throw new DomainException("El precio es obligatorio");
-        if(platoModel.getRestaurante()== null)throw new DomainException("El restaurante es obligatorio");
-        if(platoModel.getUrlLogo().isEmpty())throw new DomainException("La Url del logo es obligatoria");*/
         platoPersistencePort.savePlato(platoModel);
     }
 
@@ -44,8 +39,8 @@ public class PlatoUseCase implements IPlatoServicePort {
     @Override
     public void updatePlato(PlatoModel platoModel) {
         PlatoModel plato = getPlatoById(platoModel.getId());
+        if(!platoModel.getDescripcion().isEmpty())plato.setDescripcion(platoModel.getDescripcion());
         if(platoModel.getPrecio()!=null)plato.setPrecio(platoModel.getPrecio());
-        if(platoModel.getDescripcion().isEmpty()||!platoModel.getDescripcion().equals(plato.getDescripcion()))plato.setDescripcion(platoModel.getDescripcion());
         savePlato(plato);
     }
 
